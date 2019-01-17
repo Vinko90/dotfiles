@@ -1,6 +1,7 @@
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH="/home/warofdevil/.oh-my-zsh"
 
+DEFAULT_USER=`whoami`
 ZSH_THEME="agnoster"
 
 # CASE_SENSITIVE="true"

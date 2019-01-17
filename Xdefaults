@@ -1,6 +1,7 @@
 URxvt*background: [90]#151515
 URxvt*foreground: #c6a57b
 URxvt*background: #151515
+URxvt.font: xft:Ubuntu Mono:size=10
 !black
 URxvt*color0: #101010
 URxvt*color8: #404040

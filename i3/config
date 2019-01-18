@@ -11,14 +11,7 @@ floating_modifier $mod
 bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
-
-# change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
-
-# alternatively, you can use the cursor keys:
+bindsym $mod+l exec --no-startup-id i3lock -c 000000 -d
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
@@ -61,6 +54,12 @@ bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
+
+bindsym XF86AudioRaiseVolume exec amixer -q set Master 5%+ unmute && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec amixer -q set Master 5%- unmute && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec amixer -q set Master 1+ toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMicMute exec amixer -q set Capture toggle
+
 
 # WORKSPACE
 set $wp1 "1"

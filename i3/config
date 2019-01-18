@@ -2,13 +2,14 @@
 # by WarOfDevil
 
 set $mod Mod4
+set $term i3-sensible-terminal
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # BINDSYM
 
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
 bindsym $mod+l exec --no-startup-id i3lock -c 000000 -d
@@ -71,7 +72,7 @@ set $wp4 "4"
 set $wp5 "5"
 set $wp6 "6"
 set $wp7 "7"
-set $wp8 "8"
+set $wp8 ":8"
 set $wp9 ":9"
 set $wp10 ":10"
 bindsym $mod+1 workspace $wp1
@@ -95,8 +96,11 @@ bindsym $mod+Shift+8 move container to workspace number $wp8
 bindsym $mod+Shift+9 move container to workspace number $wp9
 bindsym $mod+Shift+0 move container to workspace number $wp10
 
+assign [instance="__weechat"] $wp8
 assign [class="Doublecmd"] $wp9
 assign [class="Firefox"] $wp10
+
+bindsym $mod+Shift+w exec --no-startup-id $term -name "__weechat" -e weechat
 
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
@@ -170,4 +174,4 @@ bar {
 
 #RUN
 
-exec-always --no-startup-id feh --bg-scale /home/warofdevil/Pictures/wallpaper.jpg
+exec --no-startup-id feh --bg-scale /home/warofdevil/Pictures/wallpaper.jpg

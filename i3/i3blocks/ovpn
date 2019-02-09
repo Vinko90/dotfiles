@@ -1,0 +1,80 @@
+#!/bin/sh
+
+CONFIG_PATH="`realpath $0`_cfgs"
+CHOICE_FILE=/tmp/.i3blocks_ovpn_choice
+
+if [ ! -z $1 ]; then
+    if [ "$1" = "select" ]; then
+        ## Config choice behaviour
+        cd $CONFIG_PATH
+        CONFIG=`ls -1 *.ovpn | dmenu`
+        echo `echo $CONFIG | sed 's/\..*$//' | tr '[:lower:]' '[:upper:]'` > $CHOICE_FILE
+        sudo openvpn --daemon --config $CONFIG
+        exit
+    elif [ "$1" = "kill" ]; then
+        sudo pkill openvpn
+        rm $CHOICE_FILE
+    elif [ "$1" = "install" ]; then
+        ## Installation behaviour
+        echo "Installing the ovpn blocklet..."
+
+        echo "Creating sudoers list (you may be asked for credentials)..."
+        echo "`whoami` ALL=(ALL) NOPASSWD: /usr/sbin/openvpn" | sudo tee /etc/sudoers.d/openvpn_`whoami`
+        echo "`whoami` ALL=(ALL) NOPASSWD: /usr/bin/pkill openvpn" | sudo tee -a /etc/sudoers.d/openvpn_`whoami`
+        
+        echo "Downloading ProtonVPN config files..."
+        mkdir $CONFIG_PATH 
+        cd $CONFIG_PATH
+        wget https://account.protonvpn.com/api/vpn/config\?Category\=SecureCore\&Platform\=Linux\&Protocol\=udp\&Tier\=2 -O sc.zip
+        unzip sc.zip
+        rm sc.zip
+        wget https://account.protonvpn.com/api/vpn/config\?Category\=Country\&Platform\=Linux\&Protocol\=udp\&Tier\=2 -O c.zip
+        unzip c.zip
+        rm c.zip
+
+        echo "Patching config files to use stored credentials..."
+        for cfg in `echo *`
+        do
+            sed -i.bak 's/auth-user-pass/auth-user-pass .creds/' $cfg
+        done
+
+        echo "Storing credentials..."
+        echo "Please provide your username:"
+        read USER
+        echo "Please provide your password:"
+        stty -echo
+        read PASS
+        stty echo
+        echo $USER > .creds
+        echo $PASS >> .creds
+
+        echo "Done!"
+        exit
+    else
+        echo "Unsupported argument"
+        exit
+    fi
+fi
+
+## Blocklet behaviour
+
+# Choose config if clicked
+case $BLOCK_BUTTON in
+    3)
+        if [ -s $CHOICE_FILE ]; then
+            i3-msg "exec `realpath $0` kill" > /dev/null
+        else
+            i3-msg "exec `realpath $0` select" > /dev/null
+        fi
+        ;;
+esac
+
+if [ -s $CHOICE_FILE ]; then
+    cat $CHOICE_FILE
+    echo ""
+    echo $COLOUR_GOOD
+else
+    echo "No VPN"
+    echo "-"
+    echo $COLOUR_BAD
+fi
